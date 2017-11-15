@@ -1,0 +1,91 @@
+<html>
+
+<head>
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <input id="main">
+  <div id="show-box">
+  </div>
+  <!--<input id="main-mysql">-->
+  <div id="show-box-mysql">
+  </div>
+</body>
+<script>
+  $(function() {
+    $("#main").keyup(function(){
+      // alert(123)
+      $(".show-item").remove();
+      
+      var searchkey = $(this).val();
+      $.ajax({
+        url: `/redis/search?searchkey=${searchkey}`,
+        async: false,
+        success: function(data) {
+          for (var i in data) {
+            $("#show-box").append(`<div class="show-item">${data[i]}</div>`)
+          }
+        }
+      });
+    });
+
+    $("#main-mysql").keyup(function(){
+      $(".show-item-mysql").remove();
+      
+      var searchkey = $(this).val();
+      $.ajax({
+        url: `http://127.0.0.1:3003/mysql/search?searchkey=${searchkey}`,
+        async: false,
+        success: function(data) {
+          for (var i in data) {
+            $("#show-box-mysql").append(`<div class="show-item-mysql">${data[i].phone}</div>`)
+          }
+        }
+      });
+    });
+  })
+</script>
+<style>
+  #main {
+    width: 200px;
+    height: 25px;
+    ;
+    font-size: 20px;
+    box-sizing: border-box;
+    padding: 5px;
+  }
+  
+  #show-box {
+    width: 200px;
+  }
+  
+  #main-mysql {
+    width: 200px;
+    height: 25px;
+    ;
+    font-size: 20px;
+    box-sizing: border-box;
+    padding: 5px;
+  }
+  
+  #show-box-mysql {
+    width: 200px;
+  }
+  
+  .show-item {
+    font-size: 20px;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+  }
+  
+  .show-item-mysql {
+    font-size: 20px;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+  }
+</style>
+
+</html>
