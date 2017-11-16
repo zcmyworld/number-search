@@ -33,6 +33,13 @@ function randomStr(len = 8) {
   return final;
 }
 
+async function mysqlSearch(searchkey) {
+  let sql = 'select phone from phone where phone like (?)';
+  let args = [searchkey + '%'];
+  let rs = await connection.queryAsync(sql, args);
+  return rs;
+}
+
 
 async function getAutoSearchStr(str) {
   let prefix = `${str}/`;
@@ -44,46 +51,53 @@ async function getAutoSearchStr(str) {
   let prefixRank = await redisClient.zrankAsync('phone', prefix);
   let sufffixRank = await redisClient.zrankAsync('phone', suffix);
 
-  let rs = await redisClient.zrangeAsync('phone', prefixRank + 1, sufffixRank - 1);
 
+  let start = prefixRank + 1;
+  let end = sufffixRank - 1;
+
+  // if (start + 10 < end) {
+  //   end = start + 9;
+  // }
+
+  let rs = await redisClient.zrangeAsync('phone', start, end);
   let remprefix = await redisClient.zremAsync('phone', prefix);
   let remsuffix = await redisClient.zremAsync('phone', suffix);
 
   return rs;
 }
 
-
-async function init() {
-  let start_time = new Date().getTime();
-  for (let i = 0; i < 1000000; i++) {
-    console.log(i)
-    let phonenum = randomStr(11);
-    await redisClient.zaddAsync('phone', 0, phonenum);
-    let sql = 'insert into phone (phone) values (?)';
-    let args = [phonenum];
-    await connection.queryAsync(sql, args);
-  }
-  let end_time = new Date().getTime();
-  console.log('Init Finish')
-  console.log('Start..' + start_time);
-  console.log('End..' + end_time);
-  console.log('Use_time .. ' + (end_time - start_time));
-}
+const TEST_COUNT = 10;
+function sleep(milliSeconds) {
+  var startTime = new Date().getTime();
+  while (new Date().getTime() < startTime + milliSeconds);
+};
 
 co(async function () {
-  await init()
-  return
-  let start_time = new Date().getTime();
+  sleep(5000);
 
-  let test_str = '1234';
-  let rs = await getAutoSearchStr(test_str);
-  console.log(rs)
-  let end_time = new Date().getTime();
+  for (let i = 0; i < TEST_COUNT; i++) {
+    let test_str = randomStr(4);
+    // console.log(test_str)
+    // let test_str = "1234"
 
+    let start_time = new Date().getTime();
+    let rs = await getAutoSearchStr(test_str);
+    let end_time = new Date().getTime();
 
-  console.log('start..' + start_time);
-  console.log('end..' + end_time);
-  console.log('use_time .. ' + (end_time - start_time));
+    console.log('RedisResult##################################');
+    // console.log(rs)
 
+    console.log('start..' + start_time);
+    console.log('end..' + end_time);
+    console.log('use_time .. ' + (end_time - start_time));
+
+    let mysql_start_time = new Date().getTime();
+    // let mysql_rs = await mysqlSearch(test_str)
+    let mysql_end_time = new Date().getTime();
+    // console.log('MySQLResult##################################');
+    // console.log('start..' + mysql_start_time);
+    // console.log('end..' + mysql_end_time);
+    // console.log('use_time .. ' + (mysql_end_time - mysql_start_time));
+  }
 })
 

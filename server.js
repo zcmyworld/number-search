@@ -28,7 +28,10 @@ let redissearch = require('./redissearch');
 
 router.get('/redis/search', async function (ctx) {
   let searchkey = ctx.query.searchkey;
+  let start_time = new Date().getTime();
   let rs = await redissearch.search(searchkey);
+  let end_time = new Date().getTime();
+  console.log('use_time .. ' + (end_time - start_time));
   ctx.body = rs;
 })
 
@@ -36,7 +39,10 @@ let mysqlsearch = require('./mysqlsearch');
 
 router.get('/mysql/search', async function (ctx) {
   let searchkey = ctx.query.searchkey;
+  let start_time = new Date().getTime();
   let rs = await mysqlsearch.search(searchkey);
+  let end_time = new Date().getTime();
+  console.log('use_time .. ' + (end_time - start_time));
   ctx.body = rs;
 })
 

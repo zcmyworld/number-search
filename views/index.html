@@ -8,7 +8,7 @@
   <input id="main">
   <div id="show-box">
   </div>
-  <!--<input id="main-mysql">-->
+  <input id="main-mysql">
   <div id="show-box-mysql">
   </div>
 </body>
@@ -35,7 +35,7 @@
       
       var searchkey = $(this).val();
       $.ajax({
-        url: `http://127.0.0.1:3003/mysql/search?searchkey=${searchkey}`,
+        url: `/mysql/search?searchkey=${searchkey}`,
         async: false,
         success: function(data) {
           for (var i in data) {
