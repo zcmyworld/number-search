@@ -73,31 +73,22 @@ function sleep(milliSeconds) {
 };
 
 co(async function () {
-  sleep(5000);
 
   for (let i = 0; i < TEST_COUNT; i++) {
     let test_str = randomStr(4);
-    // console.log(test_str)
-    // let test_str = "1234"
 
     let start_time = new Date().getTime();
     let rs = await getAutoSearchStr(test_str);
     let end_time = new Date().getTime();
 
     console.log('RedisResult##################################');
-    // console.log(rs)
-
-    console.log('start..' + start_time);
-    console.log('end..' + end_time);
     console.log('use_time .. ' + (end_time - start_time));
 
     let mysql_start_time = new Date().getTime();
-    // let mysql_rs = await mysqlSearch(test_str)
+    let mysql_rs = await mysqlSearch(test_str)
     let mysql_end_time = new Date().getTime();
-    // console.log('MySQLResult##################################');
-    // console.log('start..' + mysql_start_time);
-    // console.log('end..' + mysql_end_time);
-    // console.log('use_time .. ' + (mysql_end_time - mysql_start_time));
+    console.log('MySQLResult##################################');
+    console.log('use_time .. ' + (mysql_end_time - mysql_start_time));
   }
 })
 
