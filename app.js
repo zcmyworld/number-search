@@ -41,9 +41,9 @@ async function mysqlSearch(searchkey) {
 }
 
 
-async function getAutoSearchStr(str) {
-  let prefix = `${str}/`;
-  let suffix = `${str}:`;
+async function redisSearch(searchkey) {
+  let prefix = `${searchkey}/`;
+  let suffix = `${searchkey}:`;
 
   await redisClient.zaddAsync('phone', 0, prefix);
   await redisClient.zaddAsync('phone', 0, suffix);
@@ -78,7 +78,7 @@ co(async function () {
     let test_str = randomStr(4);
 
     let start_time = new Date().getTime();
-    let rs = await getAutoSearchStr(test_str);
+    let rs = await redisSearch(test_str);
     let end_time = new Date().getTime();
 
     console.log('RedisResult##################################');
